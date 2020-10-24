@@ -186,11 +186,13 @@ class ExceptionHandlerHelper
 		$debug_data = null;
 		if (Config::get(RB::CONF_KEY_DEBUG_EX_TRACE_ENABLED, false)) {
 			$debug_data = [
-				Config::get(RB::CONF_KEY_DEBUG_EX_TRACE_KEY, RB::KEY_TRACE) => [
-					RB::KEY_CLASS => \get_class($ex),
-					RB::KEY_FILE  => $ex->getFile(),
-					RB::KEY_LINE  => $ex->getLine(),
-				],
+                Config::get(RB::CONF_KEY_DEBUG_EX_TRACE_KEY, RB::KEY_TRACE) => collect($ex->getTrace())->map(function ($trace) {
+                    return [
+                        RB::KEY_CLASS => $trace['class'],
+                        RB::KEY_FILE  => $trace['file'],
+                        RB::KEY_LINE  => $trace['line']
+                    ];
+                })->all(),
 			];
 		}
 
